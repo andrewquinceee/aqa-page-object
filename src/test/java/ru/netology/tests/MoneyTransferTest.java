@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import ru.netology.pages.DashboardPage;
 import ru.netology.pages.LoginPage;
 
+import static com.codeborne.selenide.Selenide.open;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MoneyTransferTest {
@@ -13,7 +14,8 @@ public class MoneyTransferTest {
     @BeforeEach
     void setup() {
         Configuration.baseUrl = "http://localhost:9999";
-        Configuration.pageLoadStrategy = "eager";
+        // Убрали pageLoadStrategy = "eager", чтобы избежать гонок при переходе между страницами
+        open("/");
     }
 
     @Test
