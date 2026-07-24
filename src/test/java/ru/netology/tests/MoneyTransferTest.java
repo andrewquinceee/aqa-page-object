@@ -24,10 +24,13 @@ public class MoneyTransferTest {
         Configuration.browserSize = "1920x1080";
         Configuration.timeout = 10000;
 
+        // 1. Сначала открываем страницу, чтобы инициализировался WebDriver (браузер)
+        open("/");
+        
+        // 2. Теперь безопасно очищаем куки и хранилище для чистоты эксперимента
         Selenide.clearBrowserCookies();
         Selenide.clearBrowserLocalStorage();
         
-        open("/");
         loginPage = new LoginPage();
     }
 
