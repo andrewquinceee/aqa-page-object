@@ -11,10 +11,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     
     - name: Set up JDK 17
-      uses: actions/setup-java@v3
+      uses: actions/setup-java@v4
       with:
         java-version: '17'
         distribution: 'temurin'
@@ -23,11 +23,8 @@ jobs:
     - name: Start App-IBank
       run: |
         echo "Запускаем приложение app-ibank..."
-        # Запускаем jar-файл в фоновом режиме и перенаправляем логи в файл
         nohup java -jar artifacts/app-ibank-build-for-testers.jar > app.log 2>&1 &
-        # Даем приложению 15 секунд на полный запуск
         sleep 15
-        # Проверяем, что приложение действительно отвечает на порту 9999
         curl -f http://localhost:9999 || (cat app.log && exit 1)
         echo "Приложение успешно запущено!"
         
@@ -36,7 +33,7 @@ jobs:
       
     - name: Upload App Log (if failed)
       if: failure()
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: app-log
         path: app.log
