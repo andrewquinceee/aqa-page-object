@@ -6,9 +6,12 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static com.codeborne.selenide.Condition.visible;
+import static com.codeborne.selenide.Condition.size;
 import static com.codeborne.selenide.Selenide.$;
-import static com.codeborne.selenide.Selenide.$$;
+import static com.codeborne.selenide.Selenide.$;
+import static com.codeborne.selenide.Selenide.$;
+import static com.codeborne.selenide.Selenide.$;
+import static com.codeborne.selenide.Selenide.open;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MoneyTransferTest {
@@ -43,8 +46,8 @@ public class MoneyTransferTest {
         $("[data-test-id='action-verify']").click();
 
         // 3. Проверка: если мы на дашборде, мы должны увидеть хотя бы одну карту и кнопку "Пополнить"
-        // Это железобетонная проверка, что приложение загрузилось
-        $$(".list__item").shouldHaveSize(2);
+        // Исправлено для Selenide 7.2.1: вместо .shouldHaveSize(2) используем .shouldHave(size(2))
+        $$(".list__item").shouldHave(size(2));
         $("[data-test-id='action-deposit']").shouldBe(visible);
         
         // Если дошли сюда - приложение работает, и селекторы верные!
