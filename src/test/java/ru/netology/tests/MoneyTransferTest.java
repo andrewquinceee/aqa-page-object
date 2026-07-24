@@ -10,7 +10,6 @@ import ru.netology.pages.LoginPage;
 import ru.netology.pages.VerificationPage;
 
 import static com.codeborne.selenide.Selenide.open;
-import static com.codeborne.selenide.Selenide.sleep;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MoneyTransferTest {
@@ -25,12 +24,9 @@ public class MoneyTransferTest {
         Configuration.browserSize = "1920x1080";
         Configuration.timeout = 10000;
 
-        open("/");
-        sleep(1000);
-
         Selenide.clearBrowserCookies();
         Selenide.clearBrowserLocalStorage();
-
+        
         open("/");
         loginPage = new LoginPage();
     }
@@ -45,18 +41,16 @@ public class MoneyTransferTest {
         VerificationPage verificationPage = loginPage.validLogin("vasya", "qwerty123");
         dashboardPage = verificationPage.validVerify("12345");
 
-        String cardNumberFrom = "5559 0000 0000 0001"; // карта-источник
-        int amountToTransfer = 1000;                  // сумма перевода
+        String cardNumberFrom = "5559 0000 0000 0001";
+        int amountToTransfer = 1000;
 
-        // Получаем баланс ВТОРОЙ карты (индекс 1)
         int initialBalance = dashboardPage.getCardBalance(1);
 
-        // Пополняем ВТОРУЮ карту (индекс 1) с ПЕРВОЙ карты
         dashboardPage.selectCardToTopUp(1)
-                     .transferMoney(amountToTransfer, cardNumberFrom);
+                .transferMoney(amountToTransfer, cardNumberFrom);
 
-        int expectedBalance = initialBalance + amountToTransfer;
         int actualBalance = dashboardPage.getCardBalance(1);
+        int expectedBalance = initialBalance + amountToTransfer;
 
         assertEquals(expectedBalance, actualBalance,
                 "Баланс второй карты должен был увеличиться на " + amountToTransfer);
