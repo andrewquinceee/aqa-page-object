@@ -8,13 +8,10 @@ import org.junit.jupiter.api.Test;
 import ru.netology.pages.DashboardPage;
 import ru.netology.pages.LoginPage;
 import ru.netology.pages.VerificationPage;
-
 import static com.codeborne.selenide.Selenide.open;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MoneyTransferTest {
-    private LoginPage loginPage;
-    private DashboardPage dashboardPage;
 
     @BeforeEach
     void setUp() {
@@ -22,16 +19,11 @@ public class MoneyTransferTest {
         Configuration.headless = true;
         Configuration.browser = "chrome";
         Configuration.browserSize = "1920x1080";
-        Configuration.timeout = 10000;
-
-        // 1. Сначала открываем страницу, чтобы инициализировался WebDriver (браузер)
-        open("/");
+        Configuration.timeout = 15000;
         
-        // 2. Теперь безопасно очищаем куки и хранилище для чистоты эксперимента
+        open("/");
         Selenide.clearBrowserCookies();
         Selenide.clearBrowserLocalStorage();
-        
-        loginPage = new LoginPage();
     }
 
     @AfterEach
@@ -41,21 +33,24 @@ public class MoneyTransferTest {
 
     @Test
     void shouldTransferMoneyBetweenOwnCardsSuccessfully() {
+        LoginPage loginPage = new LoginPage();
         VerificationPage verificationPage = loginPage.validLogin("vasya", "qwerty123");
-        dashboardPage = verificationPage.validVerify("12345");
+        DashboardPage dashboardPage = verificationPage.validVerify("12345");
 
-        String cardNumberFrom = "5559 0000 0000 0001";
-        int amountToTransfer = 1000;
+        // Используем индексы: 0 - первая карта, 1 - вторая карта
+        int cardToTopUpIndex = 1;
+        int cardFromIndex = 0;
+        String cardFromNumber = "5559 0000 0000 0001";
+        int amount = 1000;
 
-        int initialBalance = dashboardPage.getCardBalance(1);
+        int balanceBefore = dashboardPage.getCardBalance(cardToTopUpIndex);
+        
+        dashboardPage.selectCardToTopUp(cardToTopUpIndex)
+                     .transferMoney(amount, cardFromNumber);
 
-        dashboardPage.selectCardToTopUp(1)
-                .transferMoney(amountToTransfer, cardNumberFrom);
-
-        int actualBalance = dashboardPage.getCardBalance(1);
-        int expectedBalance = initialBalance + amountToTransfer;
-
-        assertEquals(expectedBalance, actualBalance,
-                "Баланс второй карты должен был увеличиться на " + amountToTransfer);
+        int balanceAfter = dashboardPage.getCardBalance(cardToTopUpIndex);
+        
+        assertEquals(balanceBefore + amount, balanceAfter, 
+            "Баланс карты получателя должен увеличиться на сумму перевода");
     }
 }
