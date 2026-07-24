@@ -13,6 +13,11 @@ public class VerificationPage {
         codeInput.shouldBe(visible).setValue(code);
         verifyButton.shouldBe(visible).click();
 
+        // !!! ГЛАВНОЕ ИСПРАВЛЕНИЕ !!!
+        // Ждем появления элемента следующей страницы (кнопки "Пополнить"), 
+        // чтобы убедиться, что редирект прошел и дашборд загрузился.
+        $("[data-test-id='action-deposit']").shouldBe(visible);
+
         return new DashboardPage();
     }
 }

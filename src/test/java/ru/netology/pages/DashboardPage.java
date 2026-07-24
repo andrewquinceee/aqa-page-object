@@ -11,11 +11,10 @@ import static com.codeborne.selenide.Selenide.$$;
 
 public class DashboardPage {
 
-    // В приложении app-ibank блоки карт имеют класс list__item
     private ElementsCollection cards = $$(".list__item");
 
     public DashboardPage() {
-        // Ждем появления хотя бы одной карты на странице
+        // Теперь этот код сработает, так как VerificationPage уже подождал загрузки
         cards.first().shouldBe(visible);
     }
 
@@ -23,13 +22,12 @@ public class DashboardPage {
         SelenideElement card = cards.get(cardIndex);
         String cardText = card.getText();
 
-        // Используем регулярное выражение для надежного поиска баланса
-        // Ищет слово "баланс:" (в любом регистре), затем любые цифры и пробелы
+        // Надежная регулярка: ищет "баланс:" (в любом регистре), затем цифры и пробелы
         Pattern pattern = Pattern.compile("(?i)баланс:\\s*([\\d\\s]+)");
         Matcher matcher = pattern.matcher(cardText);
 
         if (matcher.find()) {
-            // Удаляем все пробелы из найденной строки (превращаем "10 000" в "10000")
+            // Удаляем пробелы (превращаем "10 000" в "10000") и парсим в int
             String balanceString = matcher.group(1).replace(" ", "").trim();
             return Integer.parseInt(balanceString);
         }
@@ -38,8 +36,6 @@ public class DashboardPage {
     }
 
     public TransferPage selectCardToTopUp(int cardIndex) {
-        // Находим кнопку "Пополнить" внутри конкретной карты и кликаем
-        // В app-ibank у этой кнопки есть data-test-id="action-deposit"
         cards.get(cardIndex).find("[data-test-id='action-deposit']").shouldBe(visible).click();
         return new TransferPage();
     }
