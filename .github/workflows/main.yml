@@ -2,38 +2,47 @@ name: Java CI with Maven
 
 on:
   push:
-    branches: [ "master", "main" ]
-  pull_request:
-    branches: [ "master", "main" ]
+    branches: [ "main", "master" ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v3
     
     - name: Set up JDK 17
-      uses: actions/setup-java@v4
+      uses: actions/setup-java@v3
       with:
         java-version: '17'
         distribution: 'temurin'
         cache: maven
         
-    - name: Start App-IBank
+    - name: Start App and Wait for Ready
       run: |
-        echo "Запускаем приложение app-ibank..."
+        echo "Starting app-ibank..."
         nohup java -jar artifacts/app-ibank-build-for-testers.jar > app.log 2>&1 &
-        sleep 15
-        curl -f http://localhost:9999 || (cat app.log && exit 1)
-        echo "Приложение успешно запущено!"
         
+        echo "Waiting for app to respond on port 9999..."
+        for i in {1..30}; do
+          if curl -s -f http://localhost:9999 > /dev/null; then
+            echo "SUCCESS: App is ready and responding!"
+            exit 0
+          fi
+          echo "Waiting... ($i/30)"
+          sleep 2
+        done
+        
+        echo "FAILURE: App did not start in time. Here are the app logs:"
+        cat app.log
+        exit 1
+
     - name: Build and Test with Maven
       run: mvn clean test
       
-    - name: Upload App Log (if failed)
+    - name: Upload test reports on failure
       if: failure()
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v3
       with:
-        name: app-log
-        path: app.log
+        name: test-reports
+        path: target/surefire-reports/
