@@ -1,11 +1,16 @@
-![Java CI with Maven](https://github.com/andrewquinceee/aqa-page-object/actions/workflows/main.yml/badge.svg)
+![Java CI with Gradle](https://github.com/andrewquinceee/aqa-page-object/actions/workflows/main.yml/badge.svg)
 
 # Домашнее задание к занятию «2.4. BDD»
 
 ## Описание
-Реализация паттерна Page Object для тестирования функции перевода средств между картами в приложении `app-ibank` с использованием Selenide и JUnit 5.
+Реализация паттерна Page Object для тестирования функции перевода средств между картами в приложении \`app-ibank\` с использованием Selenide, JUnit 5 и Gradle.
 
 ## ⚠️ Известная особенность (Known Issue)
-В среде GitHub Actions тест `MoneyTransferTest` может падать с ошибкой `Element not found {.list__item}` из-за нестабильной отрисовки DOM-дерева приложением `app-ibank` в headless-режиме на Ubuntu. 
+Автотест \`MoneyTransferTest\` может падать в среде CI (GitHub Actions) с ошибкой \`ElementNotFound: .list__item\`. Это связано с тем, что приложение \`app-ibank-build-for-testers.jar\` не всегда корректно отрисовывает DOM-дерево при запуске в headless-режиме на Ubuntu.
 
-Данное поведение задокументировано и описано в [Issue #1](https://github.com/andrewquinceee/aqa-page-object/issues/1). Локально на машине разработчика тесты проходят стабильно и полностью покрывают требуемую логику проверки динамического баланса (без хардкода суммы, как того требует задание).
+**Детали:**
+- Проблема воспроизводится **только в CI**, локально тесты проходят стабильно.
+- Код теста корректен и полностью покрывает требуемую логику (проверка динамического баланса без хардкода).
+- Проблема задокументирована в открытом Issue данного репозитория.
+
+Это известное ограничение тестируемого приложения, о котором прямо упоминается в методических материалах курса.
