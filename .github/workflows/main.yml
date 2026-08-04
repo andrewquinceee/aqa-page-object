@@ -17,24 +17,14 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
 
-    - name: Setup Gradle
-      uses: gradle/actions/setup-gradle@v3
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
 
-    - name: Start App and Wait for Ready
-      run: |
-        echo "Starting app-ibank..."
-        nohup java -jar artifacts/app-ibank-build-for-testers.jar > app.log 2>&1 &
-        echo "Waiting for app to respond on port 9999..."
-        for i in {1..30}; do
-          if curl -s -f http://localhost:9999 > /dev/null; then
-            echo "SUCCESS: App is ready!"
-            exit 0
-          fi
-          sleep 2
-        done
-        echo "FAILURE: App did not start. Logs:"
-        cat app.log
-        exit 1
+    - name: Start App
+      run: java -jar artifacts/app-ibank-build-for-testers.jar &
+
+    - name: Wait for app to start
+      run: sleep 15
 
     - name: Build and Test with Gradle
-      run: gradle test
+      run: ./gradlew test -Dselenide.headless=true --info
