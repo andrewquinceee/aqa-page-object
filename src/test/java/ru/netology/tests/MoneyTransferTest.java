@@ -16,7 +16,7 @@ public class MoneyTransferTest {
     @BeforeEach
     void setUp() {
         Configuration.baseUrl = "http://localhost:9999";
-        Configuration.browser = "firefox"; // <-- ЖЕСТКО ЗАДАЕМ FIREFOX
+        Configuration.timeout = 15000;
         open("/");
     }
 
