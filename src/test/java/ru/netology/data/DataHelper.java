@@ -19,6 +19,7 @@ public class DataHelper {
     @Value
     public static class CardInfo {
         String number;
+        String maskedNumber;
     }
 
     public static AuthInfo getAuthInfo() {
@@ -30,10 +31,10 @@ public class DataHelper {
     }
 
     public static CardInfo getFirstCard() {
-        return new CardInfo("**** **** **** 0001"); // ПРАВИЛЬНЫЙ ФОРМАТ
+        return new CardInfo("5559 0000 0000 0001", "**** **** **** 0001");
     }
 
     public static CardInfo getSecondCard() {
-        return new CardInfo("**** **** **** 0002"); // ПРАВИЛЬНЫЙ ФОРМАТ
+        return new CardInfo("5559 0000 0000 0002", "**** **** **** 0002");
     }
 }

@@ -16,7 +16,6 @@ public class MoneyTransferTest {
     @BeforeEach
     void setUp() {
         Configuration.baseUrl = "http://localhost:9999";
-        Configuration.timeout = 15000;
         open("/");
     }
 
@@ -33,14 +32,17 @@ public class MoneyTransferTest {
         VerificationPage verificationPage = loginPage.validLogin(authInfo.getLogin(), authInfo.getPassword());
         DashboardPage dashboardPage = verificationPage.validVerify(verificationCode.getCode());
 
-        int balanceBeforeFirst = dashboardPage.getCardBalance(firstCard.getNumber());
-        int balanceBeforeSecond = dashboardPage.getCardBalance(secondCard.getNumber());
+        // Ищем на дашборде по МАСКИРОВАННОМУ номеру
+        int balanceBeforeFirst = dashboardPage.getCardBalance(firstCard.getMaskedNumber());
+        int balanceBeforeSecond = dashboardPage.getCardBalance(secondCard.getMaskedNumber());
 
-        dashboardPage.selectCardToTopUp(secondCard.getNumber())
+        // Переводим, указывая ПОЛНЫЙ номер карты отправителя
+        dashboardPage.selectCardToTopUp(secondCard.getMaskedNumber())
                      .transferMoney(amount, firstCard.getNumber());
 
-        int balanceAfterFirst = dashboardPage.getCardBalance(firstCard.getNumber());
-        int balanceAfterSecond = dashboardPage.getCardBalance(secondCard.getNumber());
+        // Снова проверяем по МАСКИРОВАННОМУ номеру
+        int balanceAfterFirst = dashboardPage.getCardBalance(firstCard.getMaskedNumber());
+        int balanceAfterSecond = dashboardPage.getCardBalance(secondCard.getMaskedNumber());
 
         assertEquals(balanceBeforeFirst - amount, balanceAfterFirst, 
                 "Баланс первой карты (отправителя) должен уменьшиться на сумму перевода");
