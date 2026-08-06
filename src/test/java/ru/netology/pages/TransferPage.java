@@ -2,7 +2,6 @@ package ru.netology.pages;
 
 import com.codeborne.selenide.SelenideElement;
 import static com.codeborne.selenide.Selenide.$;
-import static com.codeborne.selenide.Selenide.refresh;
 import static com.codeborne.selenide.Condition.visible;
 
 public class TransferPage {
@@ -15,9 +14,7 @@ public class TransferPage {
         fromInput.shouldBe(visible).setValue(fromCardNumber);
         actionButton.shouldBe(visible).click();
         
-        // Явно перезагружаем страницу, чтобы увидеть обновлённые балансы
-        refresh();
-        
+        // Просто возвращаем новую страницу, приложение само сделает редирект
         return new DashboardPage();
     }
 }

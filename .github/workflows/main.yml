@@ -20,5 +20,9 @@ jobs:
     - name: Start App
       run: java -jar artifacts/app-ibank-build-for-testers.jar &
 
+    - name: Wait for app to start
+      run: sleep 15
+
     - name: Build and Test with Gradle
+      # Используем Chrome по умолчанию в headless режиме
       run: ./gradlew test -Dselenide.headless=true --info
